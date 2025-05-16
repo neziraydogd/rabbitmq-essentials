@@ -1,0 +1,42 @@
+version: '3.9'
+
+services:
+  rabbitmq:
+    image: rabbitmq:4.1.0-management
+    container_name: rabbitmq
+    restart: unless-stopped
+    ports:
+      - "5672:5672" # AMQP protocol port
+      - "15672:15672" # Management UI port
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
+    #env_file:
+      #- RABBITMQ_DEFAULT_USER= admin
+      #- RABBITMQ_DEFAULT_PASS= admin
+    command: > # Optional - Enables plugins beyond management
+      bash -c "rabbitmq-plugins enable --offline rabbitmq_prometheus rabbitmq_shovel rabbitmq_shovel_management && rabbitmq-server"
+
+    volumes: # Persist data between container restarts
+      - rabbitmq_data:/var/lib/rabbitmq
+        # Optional - Custom configuration file
+      # - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+      # - ./definitions.json:/etc/rabbitmq/definitions.json:ro
+    #environment: #default configuration such as topic...etc
+      #- RABBITMQ_LOAD_DEFINITIONS=/etc/rabbitmq/definitions.json
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    networks:
+      - rabbitmq_network
+
+volumes:
+  rabbitmq_data:
+    driver: local
+
+networks:
+  rabbitmq_network:
+    driver: bridge

@@ -1,0 +1,393 @@
+{
+	"info": {
+		"_postman_id": "15511276-1ede-4add-b15f-f8c58a2c34a5",
+		"name": "RabbitMQ Essentials",
+		"description": "A collection of requests to test the RabbitMQ Essentials API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "2260717"
+	},
+	"item": [
+		{
+			"name": "Direct Exchange",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": \"msg-002\",\n    \"subject\": \"Test Direct Message\",\n    \"content\": \"This is a test message for direct exchange.\",\n    \"sender\": \"postman\",\n    \"recipient\": \"rabbitmq\",\n    \"priority\": 2,\n    \"type\": \"INFO\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/rabbitmq/direct?routingKey=direct.key",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"rabbitmq",
+						"direct"
+					],
+					"query": [
+						{
+							"key": "routingKey",
+							"value": "direct.key",
+							"description": "Optional routing key"
+						}
+					]
+				},
+				"description": "Publish a message to the direct exchange"
+			},
+			"response": []
+		},
+		{
+			"name": "Persistent Message",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": \"msg-002\",\n    \"subject\": \"Test Persistent Message\",\n    \"content\": \"This is a test message with persistent delivery mode.\",\n    \"sender\": \"postman\",\n    \"recipient\": \"rabbitmq\",\n    \"priority\": \"HIGH\",\n    \"type\": \"COMMAND\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/rabbitmq/direct/persistent?routingKey=direct.key",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"rabbitmq",
+						"direct",
+						"persistent"
+					],
+					"query": [
+						{
+							"key": "routingKey",
+							"value": "direct.key",
+							"description": "Optional routing key"
+						}
+					]
+				},
+				"description": "Publish a persistent message to the direct exchange"
+			},
+			"response": []
+		},
+		{
+			"name": "Fanout Exchange",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": \"msg-003\",\n    \"subject\": \"Test Fanout Message\",\n    \"content\": \"This is a test message for fanout exchange.\",\n    \"sender\": \"postman\",\n    \"recipient\": \"all\",\n    \"priority\": 2,\n    \"type\": \"INFO\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/rabbitmq/fanout",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"rabbitmq",
+						"fanout"
+					]
+				},
+				"description": "Publish a message to the fanout exchange (broadcasts to all bound queues)"
+			},
+			"response": []
+		},
+		{
+			"name": "Topic Exchange - Order",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"orderId\": \"order-001\",\n    \"customerId\": \"customer-001\",\n    \"items\": [\n        {\n            \"productId\": \"prod-001\",\n            \"quantity\": 2,\n            \"price\": 99.99\n        }\n    ],\n    \"totalAmount\": 199.98,\n    \"status\": \"CREATED\",\n    \"createdAt\": \"2025-05-16T10:30:00\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/rabbitmq/topic/order?action=create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"rabbitmq",
+						"topic",
+						"order"
+					],
+					"query": [
+						{
+							"key": "action",
+							"value": "create",
+							"description": "Action type (create, update, delete, etc.)"
+						}
+					]
+				},
+				"description": "Publish an order event to the topic exchange"
+			},
+			"response": []
+		},
+		{
+			"name": "Topic Exchange - Payment",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"paymentId\": \"payment-001\",\n    \"orderId\": \"order-001\",\n    \"amount\": 199.98,\n    \"method\": \"CREDIT_CARD\",\n    \"status\": \"COMPLETED\",\n    \"transactionId\": \"tx-001\",\n    \"processedAt\": \"2025-05-16T10:35:00\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/rabbitmq/topic/payment?action=process",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"rabbitmq",
+						"topic",
+						"payment"
+					],
+					"query": [
+						{
+							"key": "action",
+							"value": "process",
+							"description": "Action type (create, process, refund, etc.)"
+						}
+					]
+				},
+				"description": "Publish a payment event to the topic exchange"
+			},
+			"response": []
+		},
+		{
+			"name": "Headers Exchange",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "type",
+						"value": "report",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": \"msg-004\",\n    \"subject\": \"Test Headers Message\",\n    \"content\": \"This is a test message for headers exchange.\",\n    \"sender\": \"postman\",\n    \"recipient\": \"rabbitmq\",\n    \"priority\": 5,\n    \"type\": \"CRITICAL\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/rabbitmq/headers?format=pdf&type=report",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"rabbitmq",
+						"headers"
+					],
+					"query": [
+						{
+							"key": "format",
+							"value": "pdf"
+						},
+						{
+							"key": "type",
+							"value": "report",
+							"description": "Header value for type"
+						}
+					]
+				},
+				"description": "Publish a message using headers exchange"
+			},
+			"response": []
+		},
+		{
+			"name": "DLQ Process Queue",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": \"msg-005\",\n    \"subject\": \"Test DLQ Message\",\n    \"content\": \"This is a test message for DLQ demonstration.\",\n    \"sender\": \"postman\",\n    \"recipient\": \"rabbitmq\",\n    \"priority\": 3,\n    \"type\": \"CRITICAL\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/rabbitmq/dlq-process",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"rabbitmq",
+						"dlq-process"
+					]
+				},
+				"description": "Publish a message to demonstrate Dead Letter Queue (DLQ)"
+			},
+			"response": []
+		},
+		{
+			"name": "Delayed Message",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": \"msg-006\",\n    \"subject\": \"Test Delayed Message\",\n    \"content\": \"This is a test message with delay.\",\n    \"sender\": \"postman\",\n    \"recipient\": \"rabbitmq\",\n    \"priority\": 1,\n    \"type\": \"WARNING\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/rabbitmq/delayed?delayMs=10000",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"rabbitmq",
+						"delayed"
+					],
+					"query": [
+						{
+							"key": "delayMs",
+							"value": "10000",
+							"description": "Delay in milliseconds (10 seconds in this example)"
+						}
+					]
+				},
+				"description": "Publish a message with delay"
+			},
+			"response": []
+		},
+		{
+			"name": "Retry Policy",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": \"msg-007\",\n    \"subject\": \"Test Retry Message\",\n    \"content\": \"This is a test message for retry policy demonstration.\",\n    \"sender\": \"postman\",\n    \"recipient\": \"rabbitmq\",\n    \"priority\": 5,\n    \"type\": \"CRITICAL\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/rabbitmq/retry",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"rabbitmq",
+						"retry"
+					]
+				},
+				"description": "Publish a message to demonstrate retry policy"
+			},
+			"response": []
+		},
+		{
+			"name": "Custom Properties",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": \"msg-008\",\n    \"subject\": \"Test Custom Properties\",\n    \"content\": \"This is a test message with custom message properties.\",\n    \"sender\": \"postman\",\n    \"recipient\": \"rabbitmq\",\n    \"priority\": 5,\n    \"type\": \"CRITICAL\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/rabbitmq/custom-properties?priority=5&expiration=60000&correlationId=corr-001",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"rabbitmq",
+						"custom-properties"
+					],
+					"query": [
+						{
+							"key": "priority",
+							"value": "5",
+							"description": "Message priority (0-9)"
+						},
+						{
+							"key": "expiration",
+							"value": "60000",
+							"description": "Message expiration in milliseconds (60 seconds)"
+						},
+						{
+							"key": "correlationId",
+							"value": "corr-001",
+							"description": "Correlation ID for tracking"
+						}
+					]
+				},
+				"description": "Publish a message with custom message properties"
+			},
+			"response": []
+		}
+	]
+}
